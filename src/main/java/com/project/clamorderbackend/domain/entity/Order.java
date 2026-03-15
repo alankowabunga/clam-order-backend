@@ -2,6 +2,8 @@ package com.project.clamorderbackend.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -79,9 +81,11 @@ public class Order {
     private String notes;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -90,16 +94,9 @@ public class Order {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
         if (publicId == null) {
             publicId = generatePublicId();
         }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     private String generatePublicId() {
@@ -122,6 +119,22 @@ public class Order {
         this.totalWeight = items.stream()
                 .mapToInt(OrderItem::getQuantity)
                 .sum();
+    }
+
+    public Integer getTotalWeight() {
+        return totalWeight != null ? totalWeight : 0;
+    }
+
+    public BigDecimal getBulkDiscount() {
+        return bulkDiscount != null ? bulkDiscount : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getPickupDiscount() {
+        return pickupDiscount != null ? pickupDiscount : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getShippingFee() {
+        return shippingFee != null ? shippingFee : BigDecimal.ZERO;
     }
 
     // Enum for delivery methods

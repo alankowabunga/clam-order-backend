@@ -2,6 +2,9 @@ package com.project.clamorderbackend.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 /**
@@ -44,23 +47,18 @@ public class Product {
     private Boolean isActive = true;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
         if (publicId == null) {
             publicId = "p" + id;
         }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 
     /**
@@ -85,5 +83,9 @@ public class Product {
         }
         stockRemaining -= quantity;
         return true;
+    }
+
+    public Integer getStockRemaining() {
+        return stockRemaining != null ? stockRemaining : 0;
     }
 }

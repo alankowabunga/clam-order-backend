@@ -65,6 +65,8 @@ public class OrderMapper {
                 .isManagementOfficeCollect(order.getIsManagementOfficeCollect())
                 .paymentLastFive(order.getPaymentLastFive())
                 .status(order.getStatus().name())
+                .statusChinese(order.getStatusChinese())
+                .finalAmount(order.getTotalPay())
                 .notes(order.getNotes())
                 .createdAt(order.getCreatedAt().toString())
                 .build();

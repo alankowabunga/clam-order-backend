@@ -2,9 +2,8 @@ package com.project.clamorderbackend.application.dto;
 
 import lombok.*;
 
-/**
- * DTO for order export response
- */
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +22,8 @@ public class OrderExportResponse {
     private Boolean isManagementOfficeCollect;
     private String paymentLastFive;
     private String status;
+    private String statusChinese;
+    private BigDecimal finalAmount;
     private String notes;
     private String createdAt;
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,9 +15,9 @@ import java.util.List;
  */
 @Entity
 @Table(name = "orders", indexes = {
-    @Index(name = "idx_orders_public_id", columnList = "public_id"),
-    @Index(name = "idx_orders_status", columnList = "status"),
-    @Index(name = "idx_orders_created_at", columnList = "created_at")
+        @Index(name = "idx_orders_public_id", columnList = "public_id"),
+        @Index(name = "idx_orders_status", columnList = "status"),
+        @Index(name = "idx_orders_created_at", columnList = "created_at")
 })
 @Getter
 @Setter
@@ -100,8 +101,8 @@ public class Order {
     }
 
     private String generatePublicId() {
-        return "ORD-" + LocalDateTime.now().toString().substring(0, 10).replace("-", "") 
-               + "-" + String.format("%03d", (int)(Math.random() * 1000));
+        return "ORD-" + LocalDateTime.now().toString().substring(0, 10).replace("-", "")
+                + "-" + String.format("%03d", (int) (Math.random() * 1000));
     }
 
     /**
@@ -137,19 +138,31 @@ public class Order {
         return shippingFee != null ? shippingFee : BigDecimal.ZERO;
     }
 
-    // Enum for delivery methods
-    public enum DeliveryMethod {
-        PICKUP,              // 自取
-        TAICHUNG_DELIVERY,   // 台中配送
-        HOME_DELIVERY        // 宅配送貨
+    public String getStatusChinese() {
+        return status != null ? status.getChinese() : "";
     }
 
-    // Enum for order status
+    @Getter
+    @AllArgsConstructor
+    public enum DeliveryMethod {
+        PICKUP("自取"),
+        TAICHUNG_DELIVERY("台中配送"),
+        HOME_DELIVERY("宅配送貨");
+
+        private final String chinese;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
     public enum OrderStatus {
-        PENDING_PAYMENT,     // 待核帳
-        PAID,                // 已付款
-        READY_TO_SHIP,       // 待出貨
-        COMPLETED,           // 已完結
-        CANCELLED           // 已取消
+        PENDING_PAYMENT("待核帳"),
+        PAID("已付款"),
+        READY_TO_SHIP("待出貨"),
+        COMPLETED("已完成"),
+        CANCELLED("已取消");
+
+        private final String chinese;
+
     }
 }

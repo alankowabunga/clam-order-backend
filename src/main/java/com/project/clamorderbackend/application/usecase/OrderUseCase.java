@@ -27,6 +27,21 @@ public class OrderUseCase {
     private final OrderMapper orderMapper;
 
     /**
+     * Convert string to DeliveryMethod enum
+     */
+    private Order.DeliveryMethod parseDeliveryMethod(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("配送方式不能為空");
+        }
+        String normalized = value.toUpperCase().replace("-", "_");
+        try {
+            return Order.DeliveryMethod.valueOf(normalized);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("無效的配送方式: " + value + ". 支援: PICKUP, TAICHUNG_DELIVERY, HOME_DELIVERY");
+        }
+    }
+
+    /**
      * Calculate order price
      */
     public OrderCalculateResponse calculatePrice(OrderCalculateRequest request) {
@@ -97,7 +112,7 @@ public class OrderUseCase {
         Order order = Order.builder()
                 .customerName(request.getCustomerName())
                 .phone(request.getPhone())
-                .deliveryMethod(Order.DeliveryMethod.valueOf(request.getDeliveryMethod()))
+                .deliveryMethod(parseDeliveryMethod(request.getDeliveryMethod()))
                 .address(request.getAddress())
                 .district(request.getDistrict())
                 .status(Order.OrderStatus.PENDING_PAYMENT)
@@ -158,5 +173,9 @@ public class OrderUseCase {
         return orderRepository.findAllOrderByCreatedAtDesc().stream()
                 .map(orderMapper::toExportResponse)
                 .collect(Collectors.toList());
+    }
+
+    public OrderExportResponse toExportResponse(Order order) {
+        return orderMapper.toExportResponse(order);
     }
 }
